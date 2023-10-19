@@ -1,5 +1,12 @@
 
-#function for bookmarking, needs to be at top of page
+# the function is for bookmarking, needs to be at top of page
+# consider other methods if no bookmarking
+# ui <- fluidPage(
+#   ...
+# )
+# or
+# ui <- dashboardPage()
+
 ui <- function(request){
 
 
