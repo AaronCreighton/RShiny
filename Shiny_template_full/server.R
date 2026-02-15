@@ -14,9 +14,27 @@ server <- function(input, output, session) {
   gr <- reactiveValues()
 
   homePageServer('home')
-  report1Server('rpt1')
-  # with global variable storage
-  # don't forget to update the server function file with report1Server <- function(id, r)
-  # report1Server('rpt1', gr)
+  report1Server('rpt1', gr)
+  report2Server('rpt2', gr)
+  # to remove global storage, don't forget
+  # to update the server function file with report1Server <- function(id, gr)
+  #
+
+  output$download1 <- downloadHandler(
+    filename = function() {
+      paste0(user, "-histogram-", Sys.Date(), ".png", sep = "")
+    },
+    content = function(file) {
+      ggplot2::ggsave(
+        filename = file,
+        plot = gr$save_plot(), # Call the reactive to get the ggplot object
+        width = input$plot_width,
+        height = 4,
+        units = "in",
+        dpi = 300
+      )
+    }
+  )
+
 }
 

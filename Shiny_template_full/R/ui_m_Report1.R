@@ -1,4 +1,4 @@
-report1UI <- function(id){
+report1UI <- function(id, gr){
   ns <- NS(id)
   tagList(
     # Application title
@@ -22,19 +22,30 @@ report1UI <- function(id){
   )
 }
 
-report1Server <- function(id){
+report1Server <- function(id, gr){
   moduleServer(id, function (input, output, session){
-    ns <- NS(id)
 
-    output$distPlot <- renderPlot({
+    gr$save_plot <- reactive({
       # generate bins based on input$bins from ui.R
       x    <- faithful[, 2]
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
+      log_event("r1 plot updated")
+      ggplot(faithful, aes(x = waiting)) +
+        geom_histogram(
+          bins = input$bins,
+          fill = 'darkgray',
+          color = 'white'
+        ) +
+        labs(
+          title = 'Histogram of waiting times',
+          x = 'Waiting time to next eruption (in mins)',
+          y = 'Frequency'
+        ) +
+        theme_minimal()
 
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white',
-           xlab = 'Waiting time to next eruption (in mins)',
-           main = 'Histogram of waiting times')
+    })
+
+    output$distPlot <- renderPlot({
+      gr$save_plot()
     })
   })
 }
