@@ -18,7 +18,10 @@ sidebar <- dashboardSidebar(
   hr(),
   sidebarMenu(
     id = "tabs",
-    menuItem("Home Page", tabName = "home", icon = icon("file-text-o"), selected = TRUE),
+    menuItem("Home Page",
+             tabName = "home",
+             icon = icon("file-text-o"),
+             selected = TRUE),
     menuItem(
       "Data Entry",
       tabName = "dataentry",
@@ -32,7 +35,10 @@ sidebar <- dashboardSidebar(
         tabName = "report1",
         icon = icon("angle-right")
       ),
-      menuSubItem("Report 2", tabName = "report2", icon = icon("angle-right"))
+      menuSubItem("Report 2",
+                  tabName = "report2",
+                  icon = icon("angle-right"
+                              ))
     ),
     menuItem(
       "ReadMe",
@@ -42,7 +48,7 @@ sidebar <- dashboardSidebar(
     menuItem("About", tabName = "about", icon = icon("question"))
   ),
   hr(),
-  conditionalPanel("input.tabs == 'home'|input.tabs == 'report1'",
+  conditionalPanel("input.tabs == 'report1'|input.tabs == 'report2'",
                    fluidRow(
                      column(1),
                      column(
@@ -57,11 +63,11 @@ sidebar <- dashboardSidebar(
                          max = 5,
                          step = .5
                        ),
-                       h5("save current state"),
-                       bookmarkButton(),
-                       hr(),
                        h5("Download Plot"),
-                       downloadButton('download1', 'Download')
+                       downloadButton('download1', 'Download'),
+                       hr(),
+                       h5("save current state"),
+                       bookmarkButton()
                      )
                    ))
 )
