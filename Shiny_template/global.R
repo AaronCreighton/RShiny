@@ -1,7 +1,9 @@
+# libraries
+
 library(shinydashboard)
 
 # hide warnings etc.
-# suppressWarnings(suppressMessages(library(tidyverse)))
+suppressWarnings(suppressMessages(library(tidyverse)))
 
 
 #Bookmarking####

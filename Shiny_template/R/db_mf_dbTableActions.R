@@ -10,7 +10,7 @@
 
 mf_getTable <- function (id, r,
                          in_value = NULL,
-                         in_value2,){
+                         in_value2){
   moduleServer(id, function(input, output, session) {
 
 
@@ -20,7 +20,7 @@ mf_getTable <- function (id, r,
 
 mf_updateTable <- function (id, r,
                          in_value = NULL,
-                         in_value2,){
+                         in_value2){
   moduleServer(id, function(input, output, session) {
 
 
