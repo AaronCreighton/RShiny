@@ -13,9 +13,8 @@ Why public: initially this was a private repo, however the need arose to demonst
  - Shiny_template_full > is a shiny template with a full file architecture, designed to scale easily for complex apps. Not all apps need a full file architecture. Selecting the file architecture for an app is based on how complex the app is will be. 
 
 
-
 # updates to consider
 
 shiny template full architecture:
 - css examples
-- replace shinydashboard with bslib
+- replace shinydashboard with bslib either update this template or create a new one. 
