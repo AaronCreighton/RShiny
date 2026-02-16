@@ -3,7 +3,7 @@
 
 
 ## todo:
-# code needs to be updated to be easier to readable.
+# code needs to be updated to be easier to read.
 
 
 library(shiny)
