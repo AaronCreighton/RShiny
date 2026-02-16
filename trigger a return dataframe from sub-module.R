@@ -6,8 +6,6 @@
 ## It also shows
 # how to stream data from an input field, which could be recorded or sent somewhere as needed.
 
-# >> Not working yet!!
-
 
 library(shiny)
 library(tidyverse)
@@ -37,13 +35,13 @@ lowerServer <- function(id, pass_df = NULL) {
         shiny::updateTextInput(session, "inputText2", value = "")
       }
     })
-    output$displayText <- renderText(input$inputText1) #stream text
+    output$displayText <- renderText(paste0(input$inputText1, " ", input$inputText2)) #stream text
 
     observe({
 
       field_df <- tibble::tibble(
-        field1 = input$field1,
-        field2 = input$field2
+        field1 = input$inputText1,
+        field2 = input$inputText2
       )
 
       retV$lower_output = field_df
@@ -65,12 +63,27 @@ upperServer <- function(id) {
 
   setFields = NULL
 
+  # test passing a dataframe
+  #seFields <- tibble::tibble(
+  #  field1 = "smile",
+  #  field2 = "happy"
+  #)
+
   upper_retV$to_print <- reactive(lowerServer("lower", pass_df = setFields))
 
   # inside of an observe take any actions needed with the module's return value.
-  observeEvent(upper_retV$to_print()(),{
+  observeEvent(upper_retV$to_print()(), {
+
+    # acessing the dataframe
     print(upper_retV$to_print()())
+
+    # accessing variables in the dataframe
+    if(nrow(upper_retV$to_print()()) != 0) {
+      print(upper_retV$to_print()()$field1)
+      print(upper_retV$to_print()()$field2)
+    }
     })
+
   })
 }
 
