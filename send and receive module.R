@@ -2,8 +2,7 @@
 # in the current version, sending a reactive variable resets the lower text field
 
 
-## todo:
-# code needs to be updated to be easier to read.
+
 
 
 library(shiny)
@@ -11,58 +10,58 @@ library(tidyverse)
 
 lower_UI <- function(id) {
   tagList(
-    uiOutput(NS(id, "text3")),
-    textOutput(NS(id,"verbose3")),
-    actionButton(NS(id,"goButton"), label = "beep me", class = "btn-success")
+    uiOutput(NS(id, "inputText")),
+    textOutput(NS(id,"displayText")),
+    actionButton(NS(id,"saveButton"), label = "save text", class = "btn-success")
   )
+
 }
 
-lower <- function(id, pass) {
+lowerServer <- function(id, pass = NULL) {
   moduleServer(id, function(input, output, session) {
 
-    lowerV = reactiveValues(returnV = NULL, inV = pass)
+    retV = reactiveValues(lower_output = NULL, local_pass = pass)
 
-
-    output$text3 <- renderUI(textInput(session$ns("text3"), "test", "test"))
-    output$verbose3 <- renderText(paste0(input$text3, " ", lowerV$inV))
+    output$inputText <- renderUI(textInput(session$ns("inputText"), "lower text box", "test"))
+    output$displayText <- renderText(paste0(input$inputText, " ", retV$local_pass)) #stream text
 
     observe({
-      lowerV$returnV = paste0("beeped: ", input$text3, " ", lowerV$inV)
-    }) %>% bindEvent(input$goButton, ignoreInit = T, ignoreNULL = T) #need at least ignoreInit or else it streams
+      retV$lower_output = paste0("beeped: ", input$inputText, " ", retV$local_pass)
+    }) %>% bindEvent(input$saveButton, ignoreInit = T, ignoreNULL = T) #need at least ignoreInit or else it streams
 
-
-
-    return(reactive(lowerV$returnV))
-})
+    return(reactive(retV$lower_output)) # note the added layer of reactive
+  })
 }
 
 upper_UI <- function(id) {
   tagList(
     uiOutput(NS(id, "text_in")),
-    lower_UI(NS(id, "test"))
+    lower_UI(NS(id, "lower"))
   )
-
 }
 
-upper <- function(id) {
+upperServer <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-    upperV <- reactiveValues(one = NULL, react = NULL)
+    upper_retV <- reactiveValues(to_print = NULL, react = NULL)
 
     static = "static"
 
-    output$text_in <- renderUI(textInput(NS(id, "upper_text"), "test-upper", "reactive"))
+    output$text_in <- renderUI(textInput(NS(id, "upper_text"), "upper text input", "reactive"))
+
 
     observe({
-      upperV$react <- input$upper_text
+      upper_retV$react <- input$upper_text
     }) %>% bindEvent(input$upper_text)
 
-    upperV$one <- reactive(lower("test", pass = upperV$react))
-    #upperV$one <- reactive(lower("test", pass = static))
+    upper_retV$to_print <- reactive(lowerServer("lower", pass = upper_retV$react))
+    #upper_retV$to_print <- reactive(lowerServer("lower", pass = static))
 
+
+    # inside of an observe take any actions needed with the module's return value.
     observe({
-      if(!is.null(upperV$one()())){
-        print(upperV$one()())
+      if(!is.null(upper_retV$to_print()())){
+        print(upper_retV$to_print()())
       }
     })
   })
@@ -73,7 +72,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  upper("upper")
+  upperServer("upper")
 }
 
 shinyApp(ui, server)
