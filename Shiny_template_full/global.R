@@ -23,7 +23,7 @@ log_event <- function(x){
   message(paste0("LOG - ",Sys.time()," - ",x))
 }
 
-## set up a custom log file in environments - if needed
+## set up a custom log file in environments -> if needed
 #as the R session dies should get no files held open by sink
 
 env = "DEV"
@@ -46,10 +46,42 @@ if(env != "DEV"){
 message("----------------------------------")
 log_event(paste0("Operating in", env))
 log_event("libraries loaded")
+
+
+# set SQL connection variables
+if(env == "DEV"){
+  dbMPI <- "Sandbox"
+  server <- "...-DEV,1435"
+} ifelse(env == "TEST") {
+  dbMPI <- "Test"
+  server <- "...-UAT,1435"
+} else {
+  dbMPI <- "production"
+  server <- "...-PROD,1435"
+}
+schema <- "....."
+
+log_event("Establish Connection to SQL server")
+con <- dbPool(
+  odbc::odbc(),
+  Driver = "SQL Server", # or other
+  Server = server,
+  Database = dbMPI,
+  Trusted_Connection = "yes"
+)
+log_event("SQL server connection established")
+
+## Close connections nicely. NOTE: page refresh closes app too
+onStop(function() {
+  poolClose(con)
+  log_event("App Closed")
+  message("----------------------------------")
+})
+
 log_event('load global objects')
 
 
-#pull in functions for development
+# pull in functions for development
 source("R/util_f_generalFunctions.R", local = TRUE)
 source("R/db_f_generalFunctions.R", local = TRUE)
 source("R/db_mf_dbTableActions.R", local = TRUE)
@@ -66,6 +98,13 @@ user <- Sys.info()["user"] %>%
 ## global static lists etc e.g.
 
 CustomerList <- c("A","B", "C")
+
+userList <- con %>%
+  tbl(in_schema(schema,"...")) %>%
+  arrange(user) %>%
+  pull(user) %>%
+  str_to_title() %>%
+  unique()
 
 
 log_event("loaded global ojects")
