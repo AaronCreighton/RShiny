@@ -1,7 +1,8 @@
 report1UI <- function(id, gr){
   ns <- NS(id)
+  tagList(
     # Application title
-    titlePanel("Old Faithful Geyser Data")
+    titlePanel("Old Faithful Geyser Data"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(sidebarPanel(
@@ -11,13 +12,14 @@ report1UI <- function(id, gr){
         min = 1,
         max = 50,
         value = 30
-      )
+      ),
 
     ),
 
     # Show a plot of the generated distribution
     mainPanel(plotOutput(ns("distPlot")))
     )
+  )
 
 }
 

@@ -10,10 +10,11 @@ library(shiny)
 library(tidyverse)
 
 lower_UI <- function(id) {
-
-    uiOutput(NS(id, "inputText"))
-    textOutput(NS(id,"displayText"))
+  tagList(
+    uiOutput(NS(id, "inputText")),
+    textOutput(NS(id,"displayText")),
     actionButton(NS(id,"saveButton"), label = "save text", class = "btn-success")
+  )
 
 }
 

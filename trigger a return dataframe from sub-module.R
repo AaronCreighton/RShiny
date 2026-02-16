@@ -14,10 +14,12 @@ library(tidyverse)
 
 lower_UI <- function(id) {
     ns <- NS(id)
-    shiny::textInput(ns("inputText1"), "input text box 1")
-    shiny::textInput(ns("inputText2"), "input text box 2")
-    textOutput(ns("displayText"))
-    actionButton(ns("saveButton"), label = "save text", class = "btn-success")
+    tagList(
+      shiny::textInput(ns("inputText1"), "input text box 1"),
+      shiny::textInput(ns("inputText2"), "input text box 2"),
+      textOutput(ns("displayText")),
+      actionButton(ns("saveButton"), label = "save text", class = "btn-success")
+    )
 
 }
 

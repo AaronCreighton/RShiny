@@ -1,11 +1,10 @@
 homePageUI <- function(id){
   ns <- NS(id)
-
+  tagList(
     # Application title
-    titlePanel("Hello")
+    titlePanel("Hello"),
     textOutput(ns("greeting"))
-
-
+  )
 
 }
 
