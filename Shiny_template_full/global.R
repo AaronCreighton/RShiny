@@ -52,6 +52,12 @@ log_event("libraries loaded")
 if(env == "DEV"){
   dbMPI <- "Sandbox"
   server <- "...-DEV,1435"
+
+  # pull functions in to global environment for dev
+  source("R/util_f_generalFunctions.R", local = TRUE)
+  source("R/db_f_generalFunctions.R", local = TRUE)
+  source("R/db_mf_dbTableActions.R", local = TRUE)
+
 } ifelse(env == "TEST") {
   dbMPI <- "Test"
   server <- "...-UAT,1435"
@@ -80,13 +86,6 @@ onStop(function() {
 
 log_event('load global objects')
 
-
-# pull in functions for development
-source("R/util_f_generalFunctions.R", local = TRUE)
-source("R/db_f_generalFunctions.R", local = TRUE)
-source("R/db_mf_dbTableActions.R", local = TRUE)
-
-log_event("custom functions loaded")
 
 # declare global static variables here e.g.:
 
