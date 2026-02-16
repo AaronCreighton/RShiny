@@ -7,6 +7,7 @@ library(shinydashboard)
 suppressWarnings(suppressMessages(library(tidyverse)))
 
 
+
 ## Security audit on packages - load all packages first
 # s <- sessionInfo()
 # df <- map_dfr(c(s$otherPkgs,s$loadedOnly),function(x){
@@ -58,7 +59,7 @@ if(env == "DEV"){
   source("R/db_f_generalFunctions.R", local = TRUE)
   source("R/db_mf_dbTableActions.R", local = TRUE)
 
-} ifelse(env == "TEST") {
+} else if (env == "TEST") {
   dbMPI <- "Test"
   server <- "...-UAT,1435"
 } else {
@@ -68,13 +69,13 @@ if(env == "DEV"){
 schema <- "....."
 
 log_event("Establish Connection to SQL server")
-con <- dbPool(
-  odbc::odbc(),
-  Driver = "SQL Server", # or other
-  Server = server,
-  Database = dbMPI,
-  Trusted_Connection = "yes"
-)
+#con <- dbPool(
+#  odbc::odbc(),
+#  Driver = "SQL Server", # or other
+#  Server = server,
+#  Database = dbMPI,
+#  Trusted_Connection = "yes"
+#)
 log_event("SQL server connection established")
 
 ## Close connections nicely. NOTE: page refresh closes app too
@@ -98,12 +99,12 @@ user <- Sys.info()["user"] %>%
 
 CustomerList <- c("A","B", "C")
 
-userList <- con %>%
-  tbl(in_schema(schema,"...")) %>%
-  arrange(user) %>%
-  pull(user) %>%
-  str_to_title() %>%
-  unique()
+#userList <- con %>%
+#  tbl(in_schema(schema,"...")) %>%
+#  arrange(user) %>%
+#  pull(user) %>%
+#  str_to_title() %>%
+#  unique()
 
 
 log_event("loaded global ojects")
