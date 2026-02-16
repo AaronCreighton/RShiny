@@ -6,7 +6,13 @@ library(shinydashboard)
 # hide warnings etc.
 suppressWarnings(suppressMessages(library(tidyverse)))
 
+# for database connection
+#suppressWarnings(suppressMessages(library(pool)))
+#suppressWarnings(suppressMessages(library(DBI)))
+#suppressWarnings(suppressMessages(library(dbplyr))
 
+#to show markdown
+suppressWarnings(suppressMessages(library(markdown)))
 
 ## Security audit on packages - load all packages first
 # s <- sessionInfo()
