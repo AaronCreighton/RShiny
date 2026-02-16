@@ -1,6 +1,6 @@
 # Shiny Function Options
-this is not an exhaustive list of all type of functions
-this is a list with basic structure of the functions and current use-cases for them in Manutaki
+this is not an exhaustive list of all types of functions
+this is a list with basic structure of the functions and current use-cases for them in the Shiny_template_full app
 
 ## Standard Functions
 A couple can be found here > util_f_generalFunctions.R
@@ -24,46 +24,44 @@ util_f_parse_str_sql <- function(x){
 
 ## Module Functions
 there is the file util_mf_generalFunctions.R for utility module functions that have a general purpose
- the examples below are found here > db_mf_productsUtils.R
- this file has product specific utility module functions that interact with the database & product only Helper functions
+ the examples below are found here > db_mf_ReportsUtils.R
+ this file has Report specific utility module functions that interact with the database & Report only Helper functions
  there are three types of functions in here
 
  ### Setup
 in global.R, in order to pull seperate function files in to development context
 then the links to the files need the ```local = TRUE"``` flag.
  ```
- if(build == "TEST"){
+ if(env == "DEV"){
   dbMPI <- "Sandbox"
-  server <- "ADS-UAT,1435"
+  server <- "....,1435"
 
   #pull in functions for development
-  source("R/db_mf_productsUtils.R", local = TRUE)
+  source("R/db_mf_ReportsUtils.R", local = TRUE)
   source("R/util_f_generalFunctions.R", local = TRUE)
   source("R/util_mf_generalFunctions.R", local = TRUE)
-} else {
-  dbMPI <- "DataRaw"
-  server <- "ADS"
-}
- ```
+} 
 
-### --- Helper functions that specific for product, are standard R functions
+```
+
+### --- Helper functions that specific for Report/item, are standard R functions
  these are standard R functions & do not require error handling
 
 ```{r}
-validateProductInput <- function (singleProduct_df,
+validateReportInput <- function (singleReport_df,
                                   isBulletin){
   # validates code
   # returns if it is valid or not
 }
 ```
 ### --- get module functions
- these functions require error handlings
+ these functions require error handlings (using the custom gr message method)
  they return either the data or an error code
 
 this example has been stripped down function to the basics
 
 ```{r}
-mf_getSingleProductExists <- function(id, r,
+mf_getSingleReportExists <- function(id, gr,
                                       userCurrent = user,
                                       serial_in,
                                       customer_in,
@@ -71,33 +69,33 @@ mf_getSingleProductExists <- function(id, r,
                                       datePub_in){
   moduleServer(id, function(input, output, session) {
 
-    posProducts_df <- tryCatch(con %>%
-                                 tbl(in_schema(schema, "products")) %>%
+    posReports_df <- tryCatch(con %>%
+                                 tbl(in_schema(schema, "Reports")) %>%
                                  # .... filters table etc
                                  collect(),
                                error = function(e) {
-                                 r$errorHandling$action <- "Search table for product"
-                                 r$errorHandling$error <- e
-                                 r$errorHandling$state <- "ERROR"
+                                 gr$errorHandling$action <- "Search table for Report"
+                                 gr$errorHandling$error <- e
+                                 gr$errorHandling$state <- "ERROR"
                                }
 
     )
-    if(is.null(posProducts_df)){
-      diag_rep("Get Product ID - Failed to access")
+    if(is.null(posReports_df)){
+      log_event("Get Report ID - Failed to access")
       shiny::showNotification(
         "Error - Failed to Access DB",
         closeButton = TRUE,
         type = "error"
       )
       return(-1)
-    } else if (nrow(posProducts_df)) {
-      diag_rep(paste0("DB Check - Product is in table with id: ", toString(posProducts_df$productID)))
+    } else if (nrow(posReports_df)) {
+      log_event(paste0("DB Check - Report is in table with id: ", toString(posReports_df$ReportID)))
       shiny::showNotification(
-        "Product is already in Database",
+        "Report is already in Database",
         closeButton = TRUE,
         type = "warning"
       )
-      return(posProducts_df)
+      return(posReports_df)
     }
   })
 }
@@ -108,9 +106,9 @@ they wrap a transaction around a function call to the database, that changes the
 they require error handling
 
 ```{r}
-mf_addNewProductTrans <- function(id, r,
+mf_addNewReportTrans <- function(id, gr,
                                   entryIDs,
-                                  singleProduct_df){
+                                  singleReport_df){
   moduleServer(id, function(input, output, session) {
 
     # code to clean the data
@@ -121,9 +119,9 @@ mf_addNewProductTrans <- function(id, r,
       }
       ),
       error = function(e){
-        r$errorHandling$action = "Saving an product to tables"
-        r$errorHandling$error = e
-        r$errorHandling$state = "ERROR"
+        gr$errorHandling$action = "Saving an Report to tables"
+        gr$errorHandling$error = e
+        gr$errorHandling$state = "ERROR"
       }
     )
   })
@@ -132,17 +130,17 @@ mf_addNewProductTrans <- function(id, r,
 ```
 
 ### --- General wrapper module function
-they or sub-functions use the MT r$ error handling
+they or sub-functions use the custom gr$ error handling
 they check and validate the input
 they create the dataframe / entry that will be sent to the db
 they add ```waiter_show(``` and messaging around the transaction
-they return errors and sometime the row that was added for processing in the higher module
+they return errors and sometimes the row that was added for processing in the higher module
 
 ```{r}
-mf_updateProduct <- function(id, r,
+mf_updateReport <- function(id, gr,
                              #entryIDs = NULL,
                              itemIDs = NULL,
-                             productID_in,
+                             ReportID_in,
                              serial_in,
                              title_in,
                              summary_in,
@@ -157,24 +155,24 @@ mf_updateProduct <- function(id, r,
                              isBulletin = FALSE){
   moduleServer(id, function(input, output, session) {
 
-    if(type_in %in% notProductList){
-      isProduct_in = 0
+    if(type_in %in% notReportList){
+      isReport_in = 0
     } else if(type_in == ""){
       return(FALSE)
     } else {
-      isProduct_in = 1
+      isReport_in = 1
     }
 
     if (invalidated_in == 1){
-      singleProduct_df <- tibble::tibble(
-        productID = productID_in,
+      singleReport_df <- tibble::tibble(
+        ReportID = ReportID_in,
         dateEdit = Sys.Date(),
         invalidated = 1
       )
     } else {
-      singleProduct_df <- tibble::tibble(
-        productID = productID_in,
-        isProduct = isProduct_in,
+      singleReport_df <- tibble::tibble(
+        ReportID = ReportID_in,
+        isReport = isReport_in,
         dateEdit = Sys.Date(),
         serial = serial_in,
         title = title_in,
@@ -188,7 +186,7 @@ mf_updateProduct <- function(id, r,
         datePublished = datePub_in,
         invalidated = 0
       )
-      if(!validateProductInput(singleProduct_df = singleProduct_df,
+      if(!validateReportInput(singleReport_df = singleReport_df,
                                isBulletin = isBulletin)){
         return(FALSE)
       }
@@ -197,11 +195,11 @@ mf_updateProduct <- function(id, r,
       waiter_show( # show the waiter
         html = tagList(spin_1(), "Loading ..."), color = "#fdb913" # use a spinner
       )
-      diag_rep("Submitting updated product to server")
+      log_event("Submitting updated Report to server")
       message("----BEGIN UPDATE----")
-      mf_updateProductTrans("updateUtil", r,
+      mf_updateReportTrans("updateUtil", gr,
                             entryIDs = entryIDs,
-                            singleProduct_df = singleProduct_df)
+                            singleReport_df = singleReport_df)
       message("----END UPDATE----")
       waiter_hide()
       shiny::showNotification(
@@ -216,9 +214,9 @@ mf_updateProduct <- function(id, r,
 ```
 
 ### a Modules that acts as a function
-A simplified version is found here https://stackoverflow.com/questions/76974297/how-to-pass-and-receive-variables-to-a-module-function-then-act-on-it
-This is an example: ui_m_productsFields.R
-this is a user interface model that holds the product fields
+A simplified version is found here https://stackoverflow.com/questions/76974297/how-to-pass-and-receive-variables-to-a-module-function-then-act-on-it or in the example code folder.
+This is an example: ui_m_ReportsFields.R
+this is a user interface module that holds the Report fields
 this module updates fields in the form based on what is passed
 This module returns the user input based on a user action, button click to the upper module for processing
 
@@ -232,43 +230,43 @@ bs4Dash::box(
   width = 12,
 
   status = "primary",
-  solidHeader = T, collapsible = T, title = "New Product",
+  solidHeader = T, collapsible = T, title = "New Report",
   id = "collapsing", collapsed = T,
-  productFieldsUI(ns("newProd"))
+  ReportFieldsUI(ns("newProd"))
 )
 ```
 
 ```{r}
 # server code:
 
-manageProduct$values <- reactive(productFieldsServer("newProd", r, (!is_empty(r$viewTable$multiSelectIDs))))
+manageReport$values <- reactive(ReportFieldsServer("newProd", r, (!is_empty(r$viewTable$multiSelectIDs))))
 
-observeEvent(manageProduct$values()(),{
-  if(!is.null(manageProduct$values) && is_tibble(manageProduct$values()())){
-    manageProduct$savedProduct <- mf_addNewProduct("newProd", r,
+observeEvent(manageReport$values()(),{
+  if(!is.null(manageReport$values) && is_tibble(manageReport$values()())){
+    manageReport$savedReport <- mf_addNewReport("newProd", r,
                                                    userCurrent = user,
                                                    entryIDs = r$viewTable$multiSelectIDs,
-                                                   serial_in = manageProduct$values()()$serial_in,
-                                                   title_in = manageProduct$values()()$title_in,
-                                                   summery_in = manageProduct$values()()$summary_in,
-                                                   customer_in = manageProduct$values()()$customer_in,
-                                                   contactAnalyst_in = manageProduct$values()()$contactAnalyst_in,
-                                                   type_in = manageProduct$values()()$type_in,
-                                                   status_in = manageProduct$values()()$status_in,
-                                                   draftLink_in = manageProduct$values()()$draftLink_in,
-                                                   finalLink_in = manageProduct$values()()$finalLink_in,
-                                                   datePub_in = manageProduct$values()()$datePub_in
+                                                   serial_in = manageReport$values()()$serial_in,
+                                                   title_in = manageReport$values()()$title_in,
+                                                   summery_in = manageReport$values()()$summary_in,
+                                                   customer_in = manageReport$values()()$customer_in,
+                                                   contactAnalyst_in = manageReport$values()()$contactAnalyst_in,
+                                                   type_in = manageReport$values()()$type_in,
+                                                   status_in = manageReport$values()()$status_in,
+                                                   draftLink_in = manageReport$values()()$draftLink_in,
+                                                   finalLink_in = manageReport$values()()$finalLink_in,
+                                                   datePub_in = manageReport$values()()$datePub_in
     )
-    r$products$freshness <- r$products$freshness + 1
-    if(is_tibble(manageProduct$savedProduct)){
+    r$Reports$freshness <- r$Reports$freshness + 1
+    if(is_tibble(manageReport$savedReport)){
       showModal(
         modalDialog(
-          p("This product Appears to Exist.",style="font-weight:bold;text-align:center"),
+          p("This Report Appears to Exist.",style="font-weight:bold;text-align:center"),
           br(),
-          "Show it in the View Products table?",
+          "Show it in the View Reports table?",
           br(),br(),
           footer = div(
-            actionButton(session$ns("showInProductsT"), label = "Yes", icon = icon("ok", lib = "glyphicon")),
+            actionButton(session$ns("showInReportsT"), label = "Yes", icon = icon("ok", lib = "glyphicon")),
             modalButton("No", icon = icon("remove", lib = "glyphicon"))
           )
         )
@@ -290,23 +288,23 @@ things to pay attention to is the level of re-activity
 code as been stripped to focus on the core elements
 
 ```{r}
-productFieldsServer <- function(id, r, singleProductFields_df = NULL) {
+ReportFieldsServer <- function(id, r, singleReportFields_df = NULL) {
   shiny::moduleServer(id, function(input, output, session) {
 
-    productFields <- reactiveValues(datePub = "",
-                                    returnProduct = NULL,
-                                    setFields = singleProductFields_df # df stored in local reactive variable
+    ReportFields <- reactiveValues(datePub = "",
+                                    returnReport = NULL,
+                                    setFields = singleReportFields_df # df stored in local reactive variable
                                     )
 
     # doesn't seem to work with bind event
-    observeEvent(productFields$setFields, ignoreNULL = FALSE, handlerExpr = {
-      if(is_tibble(productFields$setFields)){
+    observeEvent(ReportFields$setFields, ignoreNULL = FALSE, handlerExpr = {
+      if(is_tibble(ReportFields$setFields)){
 
         # code to update the fields with values
-        shiny::updateSelectInput(session, "type_in", selected = singleProduct_df$type)
+        shiny::updateSelectInput(session, "type_in", selected = singleReport_df$type)
 
 
-        diag_rep(paste0("setup product input fields"))
+        log_event(paste0("setup Report input fields"))
       } else {
         # code to update the fields with empty
         shiny::updateSelectInput(session, "type_in", selected = "")
@@ -315,31 +313,31 @@ productFieldsServer <- function(id, r, singleProductFields_df = NULL) {
 
     observe({
       #create the return data frame
-      singleProduct_df <- tibble::tibble(
+      singleReport_df <- tibble::tibble(
         title_in = input$title_in,
         summary_in = input$summary_in,
         customer_in = input$customer_in,
         serial_in = input$serial_in,
         contactAnalyst_in = input$pocAnalyst_in,
         type_in = input$type_in,
-        status_in = input$productStatus_in,
+        status_in = input$ReportStatus_in,
         draftLink_in = input$draftLink_in,
         finalLink_in = input$finalLink_in,
-        datePub_in = productFields$datePub,
+        datePub_in = ReportFields$datePub,
         invalidated = 0
       )
 
       # by storing it in df as a variable the correct behavior is achieved.
       # If I pass a variable  the information is streamed back to the parent module.
-      productFields$returnProduct <- singleProduct_df
+      ReportFields$returnReport <- singleReport_df
 
-      diag_rep(paste0("user submitted product input fields"))
+      log_event(paste0("user submitted Report input fields"))
 
 
-    }) %>% bindEvent(input$productSubmit, ignoreInit = T, ignoreNULL = T)
+    }) %>% bindEvent(input$ReportSubmit, ignoreInit = T, ignoreNULL = T)
 
     # a reactive layer around the reactive variable
-    return(reactive(productFields$returnProduct))
+    return(reactive(ReportFields$returnReport))
 
 
   })
