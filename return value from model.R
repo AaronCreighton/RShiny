@@ -1,43 +1,53 @@
+### This App shows a number of cool things shiny can do.
+# - The main demonstration is how send a single variable from a sub-module to the module above triggered by an event in the sub-module.
+# - a practice example is a reusable form: one used for multiple situations, where the save button should be part of the forum,
+# - but what is done with the data different.
+
+## It also shows
+# how to stream data from an input field, which could be recorded or sent somewhere as needed.
+
+
 library(shiny)
 library(tidyverse)
 
 lower_UI <- function(id) {
   tagList(
-    uiOutput(NS(id, "text3")),
-    textOutput(NS(id,"verbose3")),
-    actionButton(NS(id,"goButton"), label = "beep me", class = "btn-success")
+    uiOutput(NS(id, "inputText")),
+    textOutput(NS(id,"displayText")),
+    actionButton(NS(id,"saveButton"), label = "save text", class = "btn-success")
   )
 }
 
-lower <- function(id) {
+lowerSever <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-    retV = reactiveValues(output = NULL)
-    output$text3 <- renderUI(textInput(session$ns("text3"), "test", "test"))
-    output$verbose3 <- renderText(input$text3)
+    retV = reactiveValues(lower_output = NULL)
+    output$inputText <- renderUI(textInput(session$ns("inputText"), "input text box", "test"))
+    output$displayText <- renderText(input$inputText) #stream text
     observe({
 
-      retV$output = input$text3
-     # return(input$text3)
-    }) %>% bindEvent(input$goButton)
+      retV$lower_output = input$inputText
 
-    return(reactive(retV$output))
+    }) %>% bindEvent(input$saveButton)
+
+    return(reactive(retV$lower_output)) # note the added layer of reactive
 })
 }
 
 upper_UI <- function(id) {
-  lower_UI(NS(id, "test"))
+  lower_UI(NS(id, "lower"))
 }
 
-upper <- function(id) {
+upperServer <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-  output <- reactiveValues(one = NULL)
-  output$one <- lower("test")
+  upper_retV <- reactiveValues(one = NULL)
+  upper_retV$to_print <- lowerSever("lower")
 
+  # inside of an observe take any actions needed with the module's return value.
   observe({
-    print(output$one())
-    })# %>% bindEvent(output$one, ignoreInit = T)
+    print(upper_retV$to_print())
+    })
   })
 }
 
@@ -46,7 +56,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  upper("upper")
+  upperServer("upper")
 }
 
 shinyApp(ui, server)
