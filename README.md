@@ -11,7 +11,13 @@ Why public: initially this was a private repo, however the need arose to demonst
 # Current contents of Repo
 
  - Shiny_template_full > is a shiny template with a full file architecture, designed to scale easily for complex apps. Not all apps need a full file architecture. Selecting the file architecture for an app is based on how complex the app is will be. 
+- send and receive module > small shiny app for experimenting with passing variables to module functions
+- trigger a return value from sub-module > shows how to pass a value from a sub-module triggered by an event in the sub-module. 
+- trigger a return dataframe from sub-module > shows how to pass a value from a sub-module triggered by an event in the sub-module. 
 
+
+# to do
+- fix the code in "trigger a return dataframe from sub-module"
 
 # updates to consider
 
