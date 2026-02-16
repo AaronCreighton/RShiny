@@ -12,13 +12,13 @@ library(tidyverse)
 
 lower_UI <- function(id) {
 
-    uiOutput(NS(id, "inputText")),
-    textOutput(NS(id,"displayText")),
+    uiOutput(NS(id, "inputText"))
+    textOutput(NS(id,"displayText"))
     actionButton(NS(id,"saveButton"), label = "save text", class = "btn-success")
 
 }
 
-lowerSever <- function(id) {
+lowerServer <- function(id) {
   moduleServer(id, function(input, output, session) {
 
     retV = reactiveValues(lower_output = NULL)
@@ -42,7 +42,7 @@ upperServer <- function(id) {
   moduleServer(id, function(input, output, session) {
 
   upper_retV <- reactiveValues(to_print = NULL)
-  upper_retV$to_print <- lowerSever("lower")
+  upper_retV$to_print <- lowerServer("lower")
 
   # inside of an observe take any actions needed with the module's return value.
   observe({
