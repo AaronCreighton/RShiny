@@ -4,8 +4,8 @@ the purpose of this repository is to hold useful example code for creating RShin
 
 # General info
 
-created by: Aaron Creighton
-Why: First created after my time working on shiny applications to save valuable learnings. 
+created by: Aaron Creighton <br>
+Why: First created after my time working on shiny applications to save valuable learnings. <br>
 Why public: initially this was a private repo, however the need arose to demonstrate my R coding skills. Thus a review of the code for public consumption was done. This review aimed to improve the code for anybody to use or read. Please reach out if you have any suggestions for improvement.
 
 # Current contents of Repo
@@ -18,3 +18,4 @@ Why public: initially this was a private repo, however the need arose to demonst
 shiny template full architecture:
 - css examples
 - replace shinydashboard with bslib either update this template or create a new one. 
+- add renv
