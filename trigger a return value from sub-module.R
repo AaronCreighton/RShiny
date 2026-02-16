@@ -1,7 +1,6 @@
 ### This App shows a number of cool things shiny can do.
 # - The main demonstration is how send a single variable from a sub-module to the module above triggered by an event in the sub-module.
-# - a practice example is a reusable form: one used for multiple situations, where the save button should be part of the forum,
-# - but what is done with the data different.
+#
 
 ## It also shows
 # how to stream data from an input field, which could be recorded or sent somewhere as needed.
