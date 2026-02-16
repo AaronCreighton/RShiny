@@ -46,7 +46,7 @@ lowerServer <- function(id, pass_df = NULL) {
 
       retV$lower_output = field_df
 
-    }) %>% bindEvent(input$saveButton, ignoreInit = T, ignoreNULL = T)
+    }) %>% bindEvent(input$saveButton, ignoreInit = T, ignoreNULL = T) #need at least ignoreInit or else it streams
 
     return(reactive(retV$lower_output)) # note the added layer of reactive
 })

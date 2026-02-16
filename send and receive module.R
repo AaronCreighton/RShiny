@@ -28,7 +28,7 @@ lower <- function(id, pass) {
 
     observe({
       lowerV$returnV = paste0("beeped: ", input$text3, " ", lowerV$inV)
-    }) %>% bindEvent(input$goButton)
+    }) %>% bindEvent(input$goButton, ignoreInit = T, ignoreNULL = T) #need at least ignoreInit or else it streams
 
 
 
@@ -57,8 +57,8 @@ upper <- function(id) {
       upperV$react <- input$upper_text
     }) %>% bindEvent(input$upper_text)
 
-    #upperV$one <- reactive(lower("test", pass = upperV$react))
-    upperV$one <- reactive(lower("test", pass = static))
+    upperV$one <- reactive(lower("test", pass = upperV$react))
+    #upperV$one <- reactive(lower("test", pass = static))
 
     observe({
       if(!is.null(upperV$one()())){
