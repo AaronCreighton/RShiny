@@ -18,8 +18,6 @@ Why public: initially this was a private repo, however the need arose to demonst
 - trigger a return dataframe from sub-module > shows how to pass a value from a sub-module triggered by an event in the sub-module. 
 
 
-# to do
-- fix the code in "trigger a return dataframe from sub-module"
 
 # updates to consider
 
