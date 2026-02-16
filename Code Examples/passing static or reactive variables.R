@@ -1,8 +1,5 @@
-# This R shiny app is for experimenting with sending static or reactive values to a module
+# This R shiny app is for experimenting with sending & returning static or reactive values to a module
 # in the current version, sending a reactive variable resets the lower text field
-
-
-
 
 
 library(shiny)
@@ -27,7 +24,8 @@ lowerServer <- function(id, pass = NULL) {
 
     observe({
       retV$lower_output = paste0("beeped: ", input$inputText, " ", retV$local_pass)
-    }) %>% bindEvent(input$saveButton, ignoreInit = T, ignoreNULL = T) #need at least ignoreInit or else it streams
+      #need at least ignoreInit or else it streams with bugs, remove bindEvent to stream to upper module
+    }) #%>% bindEvent(input$saveButton, ignoreInit = T, ignoreNULL = T)
 
     return(reactive(retV$lower_output)) # note the added layer of reactive
   })
@@ -54,15 +52,20 @@ upperServer <- function(id) {
       upper_retV$react <- input$upper_text
     }) %>% bindEvent(input$upper_text)
 
-    upper_retV$to_print <- reactive(lowerServer("lower", pass = upper_retV$react))
-    #upper_retV$to_print <- reactive(lowerServer("lower", pass = static))
-
+    #upper_retV$to_print <- reactive(lowerServer("lower", pass = upper_retV$react))
+    upper_retV$to_print <- lowerServer("lower", pass = static)
 
     # inside of an observe take any actions needed with the module's return value.
     observe({
-      if(!is.null(upper_retV$to_print()())){
-        print(upper_retV$to_print()())
+      # if static
+      if(!is.null(upper_retV$to_print())){
+        print(upper_retV$to_print())
       }
+      # if reactive
+      #if(!is.null(upper_retV$to_print()())){
+      #  print(upper_retV$to_print()())
+      #}
+
     })
   })
 }
