@@ -1,3 +1,11 @@
+# This R shiny app is for experimenting with sending static or reactive values to a module
+# in the current version, sending a reactive variable resets the lower text field
+
+
+## todo:
+# code needs to be updated to be easier to readable.
+
+
 library(shiny)
 library(tidyverse)
 
@@ -56,10 +64,6 @@ upper <- function(id) {
       if(!is.null(upperV$one()())){
         print(upperV$one()())
       }
-      # print(upperV$two()())
-      # if(!is.null(upperV$two())){
-      #   print(upperV$two())
-      # }
     })
   })
 }
