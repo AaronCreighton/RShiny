@@ -11,8 +11,6 @@ suppressWarnings(suppressMessages(library(tidyverse)))
 #suppressWarnings(suppressMessages(library(DBI)))
 #suppressWarnings(suppressMessages(library(dbplyr))
 
-#to show markdown
-suppressWarnings(suppressMessages(library(markdown)))
 
 ## Security audit on packages - load all packages first
 # s <- sessionInfo()

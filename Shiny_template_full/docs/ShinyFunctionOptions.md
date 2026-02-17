@@ -1,3 +1,6 @@
+
+
+
 # Shiny Function Options
 this is not an exhaustive list of all types of functions
 this is a list with basic structure of the functions and current use-cases for them in the Shiny_template_full app
@@ -7,7 +10,9 @@ A couple can be found here > util_f_generalFunctions.R
 this file contained utility type standard functions, with a general purpose
 these function does not have any error handling & is your basic R function
 
-```{r}
+
+
+```
 util_f_parse_str_sql <- function(x){
   r <- as.character(x) %>%
     str_replace_all("'","''") %>%
@@ -31,7 +36,8 @@ there is the file util_mf_generalFunctions.R for utility module functions that h
  ### Setup
 in global.R, in order to pull seperate function files in to development context
 then the links to the files need the ```local = TRUE"``` flag.
- ```
+
+```
  if(env == "DEV"){
   dbMPI <- "Sandbox"
   server <- "....,1435"
@@ -44,23 +50,23 @@ then the links to the files need the ```local = TRUE"``` flag.
 
 ```
 
-### --- Helper functions that specific for Report/item, are standard R functions
+### Helper functions that specific for Report/item, are standard R functions
  these are standard R functions & do not require error handling
 
-```{r}
+```
 validateReportInput <- function (singleReport_df,
                                   isBulletin){
   # validates code
   # returns if it is valid or not
 }
 ```
-### --- get module functions
+### get module functions
  these functions require error handlings (using the custom gr message method)
  they return either the data or an error code
 
 this example has been stripped down function to the basics
 
-```{r}
+```
 mf_getSingleReportExists <- function(id, gr,
                                       userCurrent = user,
                                       serial_in,
@@ -100,12 +106,12 @@ mf_getSingleReportExists <- function(id, gr,
   })
 }
 ```
-### --- transaction module functions
+### transaction module functions
 they clean the data for the DB
 they wrap a transaction around a function call to the database, that changes the database
 they require error handling
 
-```{r}
+```
 mf_addNewReportTrans <- function(id, gr,
                                   entryIDs,
                                   singleReport_df){
@@ -129,14 +135,14 @@ mf_addNewReportTrans <- function(id, gr,
 
 ```
 
-### --- General wrapper module function
+### General wrapper module function
 they or sub-functions use the custom gr$ error handling
 they check and validate the input
 they create the dataframe / entry that will be sent to the db
 they add ```waiter_show(``` and messaging around the transaction
 they return errors and sometimes the row that was added for processing in the higher module
 
-```{r}
+```
 mf_updateReport <- function(id, gr,
                              #entryIDs = NULL,
                              itemIDs = NULL,
@@ -213,7 +219,7 @@ mf_updateReport <- function(id, gr,
 
 ```
 
-### a Modules that acts as a function
+### Modules that acts as a function
 A simplified version is found here https://stackoverflow.com/questions/76974297/how-to-pass-and-receive-variables-to-a-module-function-then-act-on-it or in the example code folder.
 This is an example: ui_m_ReportsFields.R
 this is a user interface module that holds the Report fields
@@ -221,10 +227,10 @@ this module updates fields in the form based on what is passed
 This module returns the user input based on a user action, button click to the upper module for processing
 
 
-#### - Higher/Upper Module
+#### Higher/Upper Module
 this is how it is called in the higher module
 
-```{r}
+```
 # UI code
 bs4Dash::box(
   width = 12,
@@ -236,7 +242,7 @@ bs4Dash::box(
 )
 ```
 
-```{r}
+```
 # server code:
 
 manageReport$values <- reactive(ReportFieldsServer("newProd", r, (!is_empty(r$viewTable$multiSelectIDs))))
@@ -287,7 +293,7 @@ here is the server, the only part that changes from a regular module
 things to pay attention to is the level of re-activity
 code as been stripped to focus on the core elements
 
-```{r}
+```
 ReportFieldsServer <- function(id, r, singleReportFields_df = NULL) {
   shiny::moduleServer(id, function(input, output, session) {
 

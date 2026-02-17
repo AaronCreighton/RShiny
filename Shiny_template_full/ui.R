@@ -91,7 +91,7 @@ body <-
       tabItem(tabName = "readme",
               fluidPage(
                 tags$iframe(
-                  src = './readme.html',
+                  src = 'readme.html',
                   width = '100%',
                   height = '800px',
                   frameborder = 0,
@@ -101,12 +101,13 @@ body <-
       tabItem(tabName = "about",
               fluidPage(
                 tags$iframe(
-                  src = './about.html',
+                  src = 'about.html',
                   width = '100%',
                   height = '800px',
                   frameborder = 0,
                   scrolling = 'auto'
                 )
+
               ))
 
     ))
