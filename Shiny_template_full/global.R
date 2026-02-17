@@ -3,6 +3,7 @@
 
 library(shinydashboard)
 
+
 # hide warnings etc.
 suppressWarnings(suppressMessages(library(tidyverse)))
 
@@ -84,7 +85,7 @@ log_event("SQL server connection established")
 
 ## Close connections nicely. NOTE: page refresh closes app too
 onStop(function() {
-  poolClose(con)
+  #poolClose(con)
   log_event("App Closed")
   message("----------------------------------")
 })
