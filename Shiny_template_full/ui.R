@@ -5,116 +5,79 @@
 #   ...
 # )
 # or
-# ui <- dashboardPage()
+# ui <- ..
 
 ui <- function(request){
 
-
-
-Header <- dashboardHeader(title = "testing testing v2")
-
-
-sidebar <- dashboardSidebar(
-  hr(),
-  sidebarMenu(
+page_navbar(
+  title = "Template App",
+  id = "nav_id",
+  navbar_options = navbar_options(
+    bg = "#0062cc"
+  ),
+  navset_pill_list(
     id = "tabs",
-    menuItem("Home Page",
-             tabName = "home",
-             icon = icon("file-text-o"),
-             selected = TRUE),
-    menuItem(
+    selected = "home",
+    nav_panel(
+      "Home Page",
+      value =  "home",
+      icon = icon("file-text-o"),
+      homePageUI("home")
+      ),
+    nav_panel(
       "Data Entry",
-      tabName = "dataentry",
-      icon = icon("table")
+      value =  "dataEntry",
+      icon = icon("table"),
+      h2("Data Entry Content")
     ),
-    menuItem(
+    nav_menu(
       "Reports",
       icon = icon("chart-line"),
-      menuSubItem(
+      nav_panel(
         "Report 1",
-        tabName = "report1",
-        icon = icon("angle-right")
-      ),
-      menuSubItem("Report 2",
-                  tabName = "report2",
-                  icon = icon("angle-right"
-                              ))
-    ),
-    menuItem(
-      "ReadMe",
-      tabName = "readme",
-      icon = icon("mortar-board")
-    ),
-    menuItem("About", tabName = "about", icon = icon("question"))
-  ),
-  hr(),
-  conditionalPanel("input.tabs == 'report1'|input.tabs == 'report2'",
-                   fluidRow(
-                     column(1),
-                     column(
-                       10,
-                       h4("Other goodies"),
-                       hr(),
-                       sliderInput(
-                         "plot_width",
-                         "Plot width",
-                         value = 3,
-                         min = 1,
-                         max = 5,
-                         step = .5
-                       ),
-                       h5("Download Plot"),
-                       downloadButton('download1', 'Download'),
-                       hr(),
-                       h5("save current state"),
-                       bookmarkButton()
-                     )
-                   ))
-)
-
-body <-
-  dashboardBody(# Define UI for application that draws a histogram
-
-    tabItems(
-      tabItem(tabName = "home",
-              fluidPage(
-                homePageUI("home")
-              )),
-      tabItem(tabName = "dataentry",
-              fluidPage(
-               )
-    ),
-      tabItem(tabName = "report1",fluidPage(
+        value = "report1",
+        icon = icon("angle-right"),
         report1UI('rpt1')
-      )),
-      tabItem(tabName = "report2",fluidPage()),
-      tabItem(tabName = "readme",
-              fluidPage(
-                tags$iframe(
-                  src = 'readme.html',
-                  width = '100%',
-                  height = '800px',
-                  frameborder = 0,
-                  scrolling = 'auto'
-                )
-              )),
-      tabItem(tabName = "about",
-              fluidPage(
-                tags$iframe(
-                  src = 'about.html',
-                  width = '100%',
-                  height = '800px',
-                  frameborder = 0,
-                  scrolling = 'auto'
-                )
-
-              ))
-
-    ))
-
-
-  dashboardPage(Header,
-                    sidebar,
-                    body
-                )
-}
+        ),
+      nav_panel(
+        "Report 2",
+         value = "report2",
+         icon = icon("angle-right"),
+         h2("Report 2 Content")
+         )
+    ),
+    nav_panel(
+      "ReadMe",
+      value = "readme",
+      icon = icon("mortar-board"),
+      tags$iframe(
+        src = 'readme.html',
+        width = '100%',
+        height = '800px',
+        frameborder = 0,
+        scrolling = 'auto'
+      )
+    ),
+    nav_panel(
+      "About",
+      value = "about",
+      icon = icon("question"),
+      tags$iframe(
+       src = 'about.html',
+       width = '100%',
+       height = '800px',
+       frameborder = 0,
+       scrolling = 'auto'
+      )
+    ),
+  hr(),
+  conditionalPanel(
+    condition = "input.tabs == 'report1'||input.tabs == 'report2'",
+    h4("Other goodies"),
+    sliderInput("plot_width", "Plot width", value = 3, min = 1, max = 5, step = .5),
+    downloadButton('download1', 'Download'),
+    hr(),
+    bookmarkButton()
+   )
+)
+)}

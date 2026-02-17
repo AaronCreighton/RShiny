@@ -27,7 +27,7 @@ server <- function(input, output, session) {
     content = function(file) {
       ggplot2::ggsave(
         filename = file,
-        plot = gr$save_plot(), # Call the reactive to get the ggplot object
+        plot = gr$save_plot(), # Call the r eactive to get the ggplot object
         width = input$plot_width,
         height = 4,
         units = "in",

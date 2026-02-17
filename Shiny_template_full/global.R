@@ -1,8 +1,7 @@
 
 # libraries
 
-library(shinydashboard)
-
+library(bslib)
 
 # hide warnings etc.
 suppressWarnings(suppressMessages(library(tidyverse)))
